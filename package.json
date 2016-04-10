@@ -1,0 +1,23 @@
+{
+  "name": "nu-scraper",
+  "version": "1.0.0",
+  "main": "nu-scraper.js",
+  "scripts": {},
+  "author": "Noercholis <email@noercholis.com> (http://noercholis.com)",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "nu-widget": "",
+    "cheerio":"",
+    "node-horseman":""
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nubuntu/nu-scraper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nubuntu/nu-scraper/issues"
+  },
+  "homepage": "https://github.com/nubuntu/nu-scraper#readme",
+  "description": ""
+}
