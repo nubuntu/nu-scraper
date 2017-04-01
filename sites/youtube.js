@@ -8,7 +8,7 @@ exports.scraper = {
             return $('.yt-lockup-title').find('a').html();
         },
         link : function($){
-            return this.options.url + $('.yt-lockup-title').find('a').attr('href');
+            return this.source.url + $('.yt-lockup-title').find('a').attr('href');
         },
         thumbnail : function ($) {
             return $('.yt-thumb-simple').find('img').attr('src');
