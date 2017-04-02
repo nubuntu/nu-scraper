@@ -19,7 +19,8 @@ nu.widget('nubuntu.scraper', {
     _route  : function(){
         var self = this;
         this.app.use(function(req, res, next) {
-            self.uri        = req.url.split('/');
+            self.request    = req;
+            self.uri        = req.url.split('?')[0].split('/');
             var file_name   = self.uri[1];
             var file        = self.options.dir + '/' + file_name + '.js';
             console.log('load script', file);
