@@ -44,7 +44,7 @@ nu.widget('nubuntu.scraper', {
         if(typeof url=='function')
             url     = url.apply(this);
         self.success= true;
-        this.engine = new Horseman();
+        this.engine = new Horseman(this.source.options||{});
         this.engine.on('resourceError', function(err) {
             self.success = false;
             if(!res.headersSent){
