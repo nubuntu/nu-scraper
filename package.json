@@ -9,7 +9,7 @@
     "nu-widget": "",
     "cheerio":"",
     "node-horseman":"",
-    "express":"",
+    "express":""
   },
   "devDependencies": {},
   "repository": {
