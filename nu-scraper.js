@@ -3,6 +3,7 @@ var cheerio     = require('cheerio');
 var Horseman    = require('node-horseman');
 var express     = require('express');
 var fs          = require('fs');
+var os          = require('os');
 
 nu.widget('nubuntu.scraper', {
     options: {
@@ -26,7 +27,11 @@ nu.widget('nubuntu.scraper', {
             if (!fs.existsSync(file)) {
                 return res.send('Request ' + file_name + ' Not Found');
             }else{
-                self.source = require(file).scraper;
+                var script      = fs.readFileSync(file);
+                var uniq        = (new Date()).getTime();
+                var tmp         = os.tmpdir() + '/' + file_name + uniq + '.js';
+                fs.writeFileSync(tmp, script, 'utf-8')
+                self.source     = require(tmp).scraper;
                 return self._open(res);
             }
         });
