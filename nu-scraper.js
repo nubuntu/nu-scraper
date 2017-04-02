@@ -42,8 +42,11 @@ nu.widget('nubuntu.scraper', {
         });
     },
     _open        : function(){
-        var self = this;
-        this.engine.open(this.source.url).then(function(){
+        var self    = this;
+        var url     = this.source.url;
+        if(typeof url=='function')
+            url     = url.apply(this);
+        this.engine.open(url).then(function(){
             self.get_output();
         });
     },
