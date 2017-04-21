@@ -1,6 +1,6 @@
 {
   "name": "nu-scraper",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "main": "nu-scraper.js",
   "scripts": {},
   "author": "Noercholis <email@noercholis.com> (http://noercholis.com)",
@@ -9,8 +9,6 @@
     "nu-widget": "",
     "cheerio":"",
     "node-horseman":"",
-    "express":"",
-    "os":""
   },
   "devDependencies": {},
   "repository": {

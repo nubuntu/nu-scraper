@@ -1,96 +1,39 @@
-require('nu-widget');
+var nu          = require('nu-widget');
 var cheerio     = require('cheerio');
 var Horseman    = require('node-horseman');
-var express     = require('express');
-var fs          = require('fs');
-var os          = require('os');
+
 
 nu.widget('nubuntu.scraper', {
-    options: {
-        port    :8080,
-        dir     :__dirname,
-        output  : 'array'
-    },
+    options: {},
     _create : function(){
-        this.app    = express();
-        this._route();
-        this._listen();
+        this.engine = new Horseman();
+        this.engine = this.engine.open(this.options.url);
     },
-    _route  : function(){
-        var self = this;
-        this.app.use(function(req, res, next) {
-            self.request    = req;
-            self.uri        = req.url.split('?')[0].split('/');
-            var file_name   = self.uri[1];
-            var file        = self.options.dir + '/' + file_name + '.js';
-            console.log('load script', file);
-            if (!fs.existsSync(file)) {
-                return res.send('Request ' + file_name + ' Not Found');
-            }else{
-                var script      = fs.readFileSync(file);
-                var uniq        = (new Date()).getTime();
-                var tmp         = os.tmpdir() + '/' + file_name + uniq + '.js';
-                fs.writeFileSync(tmp, script, 'utf-8')
-                self.source     = require(tmp).scraper;
-                return self._open(res);
-            }
-        });
-    },
-    _listen : function(){
-        var self = this;
-        this.app.listen(this.options.port,function(){
-            console.log("scraper engine ready!");
-            console.log('Listening on port %d',self.options.port);
-        });
-    },
-    _open        : function(res){
-        var self    = this;
-        var url     = this.source.url;
-        if(typeof url=='function')
-            url     = url.apply(this);
-        self.success= true;
-        this.engine = new Horseman(this.source.options||{});
-        this.engine.on('resourceError', function(err) {
-            self.success = false;
-            if(!res.headersSent){
-                res.json({
-                    error : true,
-                    message : err.errorString
-                });                
-            }
-        });
-        this.engine.open(url).then(function(){
-            if(self.success){
-                self.get_output(res);
-            }else{
-                self.engine.close();
-            }
-        });     
-    },
-    _create_output : function(res){
+    _create_output : function(){
         switch(this.options.output){
             default:
-                this._create_output_html(res);
+                this._create_output_html();
             break;
             case 'array':
-                this._create_output_array(res);
+                this._create_output_array();
                 break;
         }
     },
-    _create_output_html : function(res){
+    _create_output_html : function(){
         this.output = this.$.hmtl();
-        res.send(this.output);
     },
-    _create_output_array : function(res){
+    _create_output_array : function(){
         this.output = [];
-        if(this.source.rows){
+        if(this.options.rows){
             this.output = this._get_rows();
         }
-        res.json(this.output);
+        if(this.options.output_callback){
+            this.options.output_callback.apply(this,[this.output]);
+        }
     },
     _get_rows : function(){
         var self = this;
-        var rows = this.source.rows.apply(this,[this.$]);
+        var rows = this.options.rows.apply(this,[this.$]);
         var output_rows = [];
         if(rows.length<1)
             return output_rows;
@@ -102,19 +45,21 @@ nu.widget('nubuntu.scraper', {
     },
     _get_row : function($row){
         var fields = {};
-        if(!this.source.fields)
+        if(!this.options.fields)
             return fields;
-        for (var key in this.source.fields) {
-            var field   = this.source.fields[key];
+        for (var key in this.options.fields) {
+            var field   = this.options.fields[key];
             fields[key] = field.apply(this,[$row]);
         }
         return fields;
     },
-    get_output : function(res){
+    get_array : function(callback){
         var self                        = this;
+        self.options.output             = 'array';
+        self.options.output_callback    = callback;
         this.engine.html().then(function(result){
             self.$       = cheerio.load(result);
-            self._create_output(res);
+            self._create_output();
         });
     },
 });
